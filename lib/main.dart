@@ -1,87 +1,91 @@
+import 'package:bloc_example/cubit/counter_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:bloc/bloc.dart';
-import 'dart:math' as math show Random;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(MaterialApp(
-    title: "Flutter Demo",
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
-    ),
-    debugShowCheckedModeBanner: false,
-    home: const HomePage(),
-  ));
+  runApp(MyApp());
 }
 
-const names = [
-  "Foo",
-  "Bar",
-  "Baz",
-];
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-extension RandomElement<T> on Iterable<T> {
-  T getRandomElement() => elementAt(math.Random().nextInt(length));
-}
-
-class NamesCubit extends Cubit<String?> {
-  NamesCubit() : super(null);
-
-  void pickRandomName() => emit(
-        names.getRandomElement(),
-      );
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<CounterCubit>(
+      create: (context) => CounterCubit(),
+      child: MaterialApp(
+        title: "Flutter Demo",
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: HomePage(title: "Flutter Bloc Example"),
+      ),
+    );
+  }
 }
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
+  const HomePage({Key? key, required this.title}) : super(key: key);
+  final String title;
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late final NamesCubit cubit;
-
-  @override
-  void initState() {
-    cubit = NamesCubit();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    cubit.close();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home Page"),
+        title: Text(widget.title),
       ),
-      body: StreamBuilder<String?>(
-        stream: cubit.stream,
-        builder: (context, snapshot) {
-          final button = TextButton(
-              onPressed: () => cubit.pickRandomName(),
-              child: const Text("Pick a random name"));
-
-              switch (snapshot.connectionState){
-                case ConnectionState.none:
-                  return button;
-                case ConnectionState.waiting:
-                  return button;
-                case ConnectionState.active:
-                  return Column(
-                    children: [
-                      Text(snapshot.data ?? ''),
-                      button,
-                    ],
-                  );
-                case ConnectionState.done:
-                  return const SizedBox();
-              }
-        },
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text("You have pushed the button this many times:"),
+            BlocConsumer<CounterCubit, CounterState>(
+              listener: (context, state) {
+                if (state.wasIncremented == true) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("Incremented!"),
+                    duration: Duration(milliseconds: 300),
+                  ));
+                } else if (state.wasIncremented == false) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text("Decremented!"),
+                    duration: Duration(milliseconds: 300),
+                  ));
+                }
+              },
+              builder: (context, state) {
+                return Text(
+                  state.counterValue.toString(),
+                  style: Theme.of(context).textTheme.headline4,
+                );
+              },
+            ),
+            Row(
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    BlocProvider.of<CounterCubit>(context).decrement();
+                  },
+                  tooltip: "Decrement",
+                  child: Icon(Icons.remove),
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    BlocProvider.of<CounterCubit>(context).increment();
+                  },
+                  tooltip: "Increment",
+                  child: Icon(Icons.add),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
