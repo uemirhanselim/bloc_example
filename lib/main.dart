@@ -4,6 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
+  final CounterState counterState1 = CounterState(counterValue: 1);
+  final CounterState counterState2 = CounterState(counterValue: 1);
+  print(counterState1 == counterState2);
   runApp(MyApp());
 }
 
@@ -48,12 +51,12 @@ class _HomePageState extends State<HomePage> {
             BlocConsumer<CounterCubit, CounterState>(
               listener: (context, state) {
                 if (state.wasIncremented == true) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text("Incremented!"),
                     duration: Duration(milliseconds: 300),
                   ));
                 } else if (state.wasIncremented == false) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text("Decremented!"),
                     duration: Duration(milliseconds: 300),
                   ));
