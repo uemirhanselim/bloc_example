@@ -23,12 +23,11 @@ class _HomeScreenState extends State<HomeScreen> {
       listener: (context, state) {
         if (state is InternetConnected &&
             state.connectionType == ConnectionType.Wifi) {
-              BlocProvider.of<CounterCubit>(context).increment();
-            } 
-            else if (state is InternetConnected &&
-            state.connectionType == ConnectionType.Mobile) { 
-              BlocProvider.of<CounterCubit>(context).decrement();
-            }
+          BlocProvider.of<CounterCubit>(context).increment();
+        } else if (state is InternetConnected &&
+            state.connectionType == ConnectionType.Mobile) {
+          BlocProvider.of<CounterCubit>(context).decrement();
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -75,7 +74,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              /*Row(
+              SizedBox(
+                height: 24.0,
+              ),
+              Builder(
+                builder: (context) {
+                  final counterState = context.watch<CounterCubit>().state;
+                  final internetState = context.watch<InternetCubit>().state;
+
+                  if (internetState is InternetConnected &&
+                      internetState.connectionType == ConnectionType.Mobile) {
+                    return Text(
+                      "Counter: " +
+                          counterState.counterValue.toString() +
+                          "Internet: Mobile",
+                      style: Theme.of(context).textTheme.headline6,
+                    );
+                  } else if (internetState is InternetConnected && internetState.connectionType == ConnectionType.Wifi) {
+                    return Text("Counter: " + counterState.counterValue.toString() + "Internet: Wi-fi");
+                  } else {
+                    return Text("Counter: " + counterState.counterValue.toString() + "Internet: Disconnected");
+                  }
+                },
+              ),
+              SizedBox(
+                height: 24.0,
+              ),
+              Row(
                 children: [
                   FloatingActionButton(
                     onPressed: () {
@@ -100,24 +125,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: widget.color,
                 child: Text("Go to Second Screen"),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    "/second"
-                  );
+                  Navigator.of(context).pushNamed("/second");
                 },
               ),
               SizedBox(
                 height: 24.0,
               ),
               MaterialButton(
-                
                 color: widget.color,
                 child: Text("Go to Third Screen"),
-                onPressed: () { 
-                  Navigator.of(context).pushNamed(
-                    "/third"
-                  );
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/third");
                 },
-              ), */
+              ),
             ],
           ),
         ),
