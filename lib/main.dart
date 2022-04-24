@@ -23,13 +23,13 @@ void main() async {
   );
 
   HydratedBlocOverrides.runZoned(
-      () => runApp(MyApp(
-            appRouter: AppRouter(),
-            connectivity: Connectivity(),
-          )),
-      storage: storage,
-      blocObserver: AppBlocObserver(),
-      );
+    () => runApp(MyApp(
+      appRouter: AppRouter(),
+      connectivity: Connectivity(),
+    )),
+    storage: storage,
+    blocObserver: AppBlocObserver(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -47,9 +47,15 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<InternetCubit>(
-            create: (context) => InternetCubit(connectivity: connectivity)),
-        BlocProvider<CounterCubit>(create: (context) => CounterCubit()),
-        BlocProvider<SettingsCubit>(create: (context) => SettingsCubit()),
+          create: (context) => InternetCubit(connectivity: connectivity),
+        ),
+        BlocProvider<CounterCubit>(
+          create: (context) => CounterCubit(),
+        ),
+        BlocProvider<SettingsCubit>(
+          create: (context) => SettingsCubit(),
+          lazy: false,
+        ),
       ],
       child: MaterialApp(
         title: "Flutter Demo",
