@@ -113,14 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   FloatingActionButton(
                     onPressed: () {
-                      BlocProvider.of<CounterCubit>(context).decrement();
+                      context.read<CounterCubit>().decrement();
                     },
                     tooltip: "Decrement",
                     child: Icon(Icons.remove),
                   ),
                   FloatingActionButton(
                     onPressed: () {
-                      BlocProvider.of<CounterCubit>(context).increment();
+                      context.read<CounterCubit>().increment();
                     },
                     tooltip: "Increment",
                     child: Icon(Icons.add),
