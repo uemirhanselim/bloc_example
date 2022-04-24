@@ -100,6 +100,15 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 height: 24.0,
               ),
+              Builder(
+                builder: (context) {
+                  final counterValue = context.select((CounterCubit cubit) => cubit.state.counterValue);
+                  return Text("Counter: " + counterValue.toString(), style: Theme.of(context).textTheme.headline6,);
+                },
+              ),
+              SizedBox(
+                height: 24.0,
+              ),
               Row(
                 children: [
                   FloatingActionButton(
